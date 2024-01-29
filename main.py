@@ -7,5 +7,8 @@ def load_cfg(filename = 'config.json'):
         cfg = json.load(f)
     return cfg
 
-vk.test_function()
-ya.test_function()
+vk_token = load_cfg()['vk_token']
+ya_token = load_cfg()['ya_token']
+print(vk_token, ya_token)
+# vk.test_function()
+# ya.test_function()

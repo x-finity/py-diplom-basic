@@ -9,6 +9,7 @@ def load_cfg(filename = '__pycache__/config.json'):
 
 vk_token = load_cfg()['vk_token']
 ya_token = load_cfg()['ya_token']
-print(vk_token, ya_token)
-# vk.test_function()
-# ya.test_function()
+
+vk_client = vk.VKAPIClient(vk_token, '86301318')
+ya_client = ya.YandexDiskAPIClient(ya_token)
+print(vk_client.get_proile_photos_info())

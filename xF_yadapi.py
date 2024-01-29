@@ -4,3 +4,7 @@ from pprint import pprint
 
 def test_function():
     print('yad test function')
+
+class YandexDiskAPIClient:
+    def __init__(self, token):
+        self.token = token

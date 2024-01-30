@@ -51,11 +51,11 @@ def get_photo_url_n_likes(quantity = 5):
     return photo_tuples, uniq_likes_pool
 
 def backup_photos(vk_id, quantity = 5):
-    def progress_bar(n, width = 50):
+    def progress_bar(n, width = 50, file = ''):
         percent = n / quantity
         filled = int(width * percent)
-        bar = '=' * filled + '-' * (width - filled)
-        print(f'\r[{bar}] {percent * 100:.2f}%', end = '')
+        bar = '*' * filled + '-' * (width - filled)
+        print(f'\r[{bar}] {percent * 100:.2f}% {file}', end = '')
     def fill_json(filename, size):
         return [{'filename': filename, 'size': size}]
     def upload_photo_and_json(filename, type):
@@ -65,8 +65,8 @@ def backup_photos(vk_id, quantity = 5):
     url_and_likes, likes_pool = get_photo_url_n_likes(quantity)
     url_and_likes.sort(key=lambda x: x[1])
     n = 0
-    for url, likes, date, type in url_and_likes:
-        progress_bar(n)
+    progress_bar(n)
+    for url, likes, date, type in url_and_likes:  
         if likes in likes_pool:
             date = datetime.fromtimestamp(date).strftime('%Y-%m-%d_%H-%M-%S')
             # print(date)
@@ -75,6 +75,7 @@ def backup_photos(vk_id, quantity = 5):
         else:
             filename = f'backup_{vk_id}/{likes}'
             upload_photo_and_json(filename, type)
+        progress_bar(n, file = f'{filename}.jpg')
         n += 1
     progress_bar(quantity)
 

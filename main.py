@@ -4,7 +4,7 @@ from pprint import pprint
 import xF_vkapi as vk
 import xF_yadapi as ya
 
-def load_cfg(filename = '__pycache__/config.json'):
+def load_cfg(filename = 'config.json'):
     with open(filename) as f:
         cfg = json.load(f)
     return cfg

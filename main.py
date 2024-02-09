@@ -3,8 +3,9 @@ from datetime import datetime
 from pprint import pprint
 import xF_vkapi as vk
 import xF_yadapi as ya
+# import xF_gdrive as gd
 
-def load_cfg(filename = 'config.json'):
+def load_cfg(filename = '__pycache__/config.json'):
     with open(filename) as f:
         cfg = json.load(f)
     return cfg
@@ -20,7 +21,8 @@ if user_id == '':
 # print(user_id)
 vk_client = vk.VKAPIClient(vk_token, user_id)
 ya_client = ya.YandexDiskAPIClient(ya_token)
-
+# gd_client = gd.GoogleDriveAPIClient()
+photos_info = []
 # pprint(vk_client.get_proile_photos_info())
 def get_photo_url_n_likes(quantity = 5):
     """
@@ -57,13 +59,15 @@ def backup_photos(vk_id, quantity = 5):
         bar = '*' * filled + '-' * (width - filled)
         print(f'\r[{bar}] {percent * 100:.2f}% {file}', end = '')
     def fill_json(filename, size):
-        return [{'filename': filename, 'size': size}]
-    def upload_photo_and_json(filename, type):
+        return {'filename': filename, 'size': size}
+    def upload_photo(filename, type):
         ya_client.upload_file_by_url(url, f'{filename}.jpg')
-        ya_client.upload_var(f'{filename}.json', json.dumps(fill_json(f'{filename}.jpg', type)))
+        photos_info.append(fill_json(f'{filename}.jpg', type))
+    def upload_json(filename, var):
+        ya_client.upload_var(f'backup_{vk_id}/{filename}.json', json.dumps(var))
     
     url_and_likes, likes_pool = get_photo_url_n_likes(quantity)
-    url_and_likes.sort(key=lambda x: x[1])
+    # url_and_likes.sort(key=lambda x: x[1])
     n = 0
     progress_bar(n)
     for url, likes, date, type in url_and_likes:  
@@ -71,12 +75,16 @@ def backup_photos(vk_id, quantity = 5):
             date = datetime.fromtimestamp(date).strftime('%Y-%m-%d_%H-%M-%S')
             # print(date)
             filename = f'backup_{vk_id}/{likes}-{date}'
-            upload_photo_and_json(filename, type)
+            upload_photo(filename, type)
         else:
             filename = f'backup_{vk_id}/{likes}'
-            upload_photo_and_json(filename, type)
+            upload_photo(filename, type)
         progress_bar(n, file = f'{filename}.jpg')
         n += 1
     progress_bar(quantity)
+    print()
+    pprint(photos_info)
+    upload_json(f'backup_{vk_id}', photos_info)
 
 backup_photos(user_id)
+
